@@ -17,6 +17,7 @@ const User = props => {
     const [search, setSearch] = React.useState('')
     const refFire = firebase.firestore().collection('user')
     const [visible, setVisible] = React.useState(false)
+    const [flag, setFlag] = React.useState('save')
 
     React.useEffect(() => {
         if (search === '') {
@@ -49,18 +50,49 @@ const User = props => {
     }
 
     const handleSave = () => {
-        refFire.add({
-            name: user.name,
-            description: user.description,
-            status: user.status,
-        }).then((docRef) => {
-            console.log("")
-        })
-            .catch((error) => {
-                console.log('Save Data Error ' + error)
-
+        if (flag === 'save') {
+            refFire.add({
+                name: user.name,
+                description: user.description,
+                status: user.status,
+            }).then((docRef) => {
+                console.log("")
             })
+                .catch((error) => {
+                    console.log('Save Data Error ' + error)
+
+                })
+        }else {
+            
+        }
         setVisible(!visible)
+    }
+
+    const handleUpdate = (name, description) => {
+        setFlag('update')
+        setVisible(!visible)
+        setUser({...user, name: name, description: description})
+    }
+
+    const handleButtonUpdate = () => {
+        if (flag === 'update'){
+            return(
+                <View style={{marginBottom: 20}}>
+                    <Text style={{marginBottom: 10}}>Status</Text>
+                    <Button
+                        icon={{
+                            name: "user-unfollow",
+                            type: 'simple-line-icon',
+                            size: 18,
+                            color: "white",
+                        }}
+                        buttonStyle={{backgroundColor: '#d41313'}}
+                        title="Non-Aktifkan Pelanggan"
+                        onPress={handleSave}
+                    />
+                </View>
+            )
+        }
     }
 
     const generateUser = () => {
@@ -74,6 +106,7 @@ const User = props => {
                                 name={item.name}
                                 description={item.description}
                                 status={item.status}
+                                handleUpdate={handleUpdate}
                             />
                         </View>
                     )
@@ -120,18 +153,19 @@ const User = props => {
                     <Card.Title>Tambah Pelanggan Baru</Card.Title>
                     <Card.Divider/>
                     <View>
-                        <Text>Nama Pelanggan</Text>
+                        <Text style={{marginBottom: 10}}>Nama Pelanggan</Text>
                         <Input
                             placeholder='Masukan Nama Pelanggan'
                             leftIcon={{ type: 'ionicons', name: 'person' }}
                             onChangeText={(value) => setUser({...user, name: value})}
                         />
-                        <Text>Deskripsi</Text>
+                        <Text style={{marginBottom: 10}}>Deskripsi</Text>
                         <Input
                             placeholder='Masukan Deskripsi'
                             leftIcon={{ type: 'entypo', name: 'open-book' }}
                             onChangeText={(value) => setUser({...user, description: value})}
                         />
+                        {handleButtonUpdate()}
                         <View style={{flexDirection: 'row'}}>
                             <Button
                                 icon={{
