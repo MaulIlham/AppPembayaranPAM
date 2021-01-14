@@ -3,7 +3,7 @@ import {View, StyleSheet, Text, TouchableOpacity} from 'react-native';
 import {Avatar, Badge} from "react-native-elements";
 
 const CardUser = props => {
-    const {name, description, status, handleUpdate} = props
+    const {user, handleDetail} = props
 
     const handleUserStatus = (status) => {
         if (status === 'Aktif'){
@@ -25,7 +25,7 @@ const CardUser = props => {
 
     return(
         <View style={styles.container}>
-            <TouchableOpacity onPress={handleUpdate}>
+            <TouchableOpacity onPress={() => handleDetail(user)}>
                 <View style={{flexDirection: 'row', marginTop: 5, marginLeft: 5, marginRight: 5}}>
                     <View style={[styles.vTitle,{width: 190, borderBottomWidth: 1, borderLeftWidth: 1, flexDirection: 'row', alignItems: 'center'}]}>
                         <View style={styles.image}>
@@ -34,12 +34,12 @@ const CardUser = props => {
                                 source={require('../profile_placeholder.png')}
                                 size='small'
                             />
-                            {handleUserStatus(status)}
+                            {handleUserStatus(user.status)}
                         </View>
-                        <Text style={{fontSize: 15}}>{name}</Text>
+                        <Text style={{fontSize: 15}}>{user.name}</Text>
                     </View>
                     <View style={[styles.vTitle,{width: 190, borderRightWidth: 1, borderBottomWidth: 1, alignItems: 'center', justifyContent: 'center'}]}>
-                        <Text style={{fontSize: 15}}>{description}</Text>
+                        <Text style={{fontSize: 15}}>{user.amount}</Text>
                     </View>
                 </View>
             </TouchableOpacity>

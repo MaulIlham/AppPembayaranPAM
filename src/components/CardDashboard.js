@@ -1,9 +1,9 @@
 import React from "react";
-import {View, Text, StyleSheet} from "react-native";
+import {View, Text, StyleSheet, TouchableOpacity} from "react-native";
 import {Card, Badge} from "react-native-elements";
 
 const CardDashboard = props => {
-    const {name, status} = props
+    const {name, status, handleDetailUser, id} = props
 
     const handleBadge = (status) => {
         if (status === 'Lunas'){
@@ -25,14 +25,16 @@ const CardDashboard = props => {
 
     return(
             <View style={styles.container}>
-                <Card containerStyle={styles.card}>
-                    <View style={styles.vCard}>
-                        <View style={styles.vtext}>
-                            <Text style={styles.txtName}>{name}</Text>
+                <TouchableOpacity onPress={() => handleDetailUser(name,status, id)}>
+                    <Card containerStyle={styles.card}>
+                        <View style={styles.vCard}>
+                            <View style={styles.vtext}>
+                                <Text style={styles.txtName}>{name}</Text>
+                            </View>
+                            {handleBadge(status)}
                         </View>
-                        {handleBadge(status)}
-                    </View>
-                </Card>
+                    </Card>
+                </TouchableOpacity>
             </View>
     )
 }

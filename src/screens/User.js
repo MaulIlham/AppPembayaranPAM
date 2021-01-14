@@ -1,18 +1,19 @@
 import React from "react";
-import {View, StyleSheet, Text, ScrollView} from "react-native";
+import {View, StyleSheet, Text, ScrollView, Alert} from "react-native";
 import {Divider, SearchBar, Card, Input, Button} from "react-native-elements";
 import {FAB, Modal} from "react-native-paper";
 import CardUser from "../components/CardUser";
-import Icon from 'react-native-vector-icons/Entypo'
 import firebase from '../services/firebase'
-import {Fold, Wander} from 'react-native-animated-spinkit'
+import {Fold} from 'react-native-animated-spinkit'
 
 const User = props => {
     const [user, setUser] = React.useState({
-        name: 'Rudi',
-        description: 'oo',
+        name: '',
+        amount: '',
         status: 'Aktif',
+        transactions: [],
     })
+    const [idUser, setIdUser] = React.useState('')
     const [dataUser, setDataUser] = React.useState([])
     const [search, setSearch] = React.useState('')
     const refFire = firebase.firestore().collection('user')
@@ -27,14 +28,16 @@ const User = props => {
         }
     },[search])
 
-    const getAllDataUser = (queysnapshot) => {
+    const getAllDataUser = (querySnapshot) => {
         const users = [];
-        queysnapshot.forEach((doc) => {
-            const { name, description, status} = doc.data()
+        querySnapshot.forEach((doc) => {
+            const { name, amount, status, transactions} = doc.data()
             users.push({
+                key: doc.id,
                 name,
-                description,
+                amount,
                 status,
+                transactions,
             });
         });
         setDataUser(users)
@@ -50,49 +53,46 @@ const User = props => {
     }
 
     const handleSave = () => {
-        if (flag === 'save') {
             refFire.add({
                 name: user.name,
-                description: user.description,
+                amount: user.amount,
                 status: user.status,
+                transactions: user.transactions,
             }).then((docRef) => {
                 console.log("")
+                setVisible(!visible)
             })
                 .catch((error) => {
                     console.log('Save Data Error ' + error)
 
                 })
-        }else {
-            
-        }
-        setVisible(!visible)
     }
 
-    const handleUpdate = (name, description) => {
-        setFlag('update')
-        setVisible(!visible)
-        setUser({...user, name: name, description: description})
+    const handleClose = () => {
+        setUser({...user, name: '', amount: ''})
+        handleModal()
     }
 
-    const handleButtonUpdate = () => {
-        if (flag === 'update'){
-            return(
-                <View style={{marginBottom: 20}}>
-                    <Text style={{marginBottom: 10}}>Status</Text>
-                    <Button
-                        icon={{
-                            name: "user-unfollow",
-                            type: 'simple-line-icon',
-                            size: 18,
-                            color: "white",
-                        }}
-                        buttonStyle={{backgroundColor: '#d41313'}}
-                        title="Non-Aktifkan Pelanggan"
-                        onPress={handleSave}
-                    />
-                </View>
-            )
-        }
+    const handleDetail = (user) => {
+        props.navigation.navigate('DetailUser',{
+            user: user
+        })
+    }
+
+    const handleBtnUpdate = () => {
+        const updateRef = firebase.firestore().collection('user').doc(idUser)
+        updateRef.set({
+            name: user.name,
+            amount: user.amount,
+            status: 'Tidak Aktif'
+        }).then((docRef) => {
+            setUser({...user, name: '', amount: ''})
+            setIdUser('')
+            setVisible(!visible)
+        }).catch(error => {
+            console.log('update ' +error )
+
+        })
     }
 
     const generateUser = () => {
@@ -103,10 +103,8 @@ const User = props => {
                     return(
                         <View key={index}>
                             <CardUser
-                                name={item.name}
-                                description={item.description}
-                                status={item.status}
-                                handleUpdate={handleUpdate}
+                                user={item}
+                                handleDetail={handleDetail}
                             />
                         </View>
                     )
@@ -126,6 +124,8 @@ const User = props => {
         setVisible(!visible)
     }
 
+
+
     return(
         <View style={styles.container}>
             <View style={styles.vSearch}>
@@ -142,12 +142,13 @@ const User = props => {
                     <Text style={{fontSize: 15}}>Nama</Text>
                 </View>
                 <View style={[styles.vTitle,{width: 190, borderRightWidth: 1, borderBottomWidth: 1, borderTopWidth: 1}]}>
-                    <Text style={{fontSize: 15}}>Deskripsi</Text>
+                    <Text style={{fontSize: 15}}>Meteran Terakhir</Text>
                 </View>
             </View>
             <ScrollView style={{marginTop: 5}}>
                 {generateUser()}
             </ScrollView>
+
             <Modal visible={visible} onDismiss={handleModal} contentContainerStyle={{backgroundColor: 'white', width: 373, paddingBottom: 10, marginLeft: 10}} >
                 <Card>
                     <Card.Title>Tambah Pelanggan Baru</Card.Title>
@@ -157,15 +158,17 @@ const User = props => {
                         <Input
                             placeholder='Masukan Nama Pelanggan'
                             leftIcon={{ type: 'ionicons', name: 'person' }}
+                            value={user.name}
                             onChangeText={(value) => setUser({...user, name: value})}
                         />
-                        <Text style={{marginBottom: 10}}>Deskripsi</Text>
+                        <Text style={{marginBottom: 10}}>Jumlah Meteran</Text>
                         <Input
-                            placeholder='Masukan Deskripsi'
-                            leftIcon={{ type: 'entypo', name: 'open-book' }}
-                            onChangeText={(value) => setUser({...user, description: value})}
+                            placeholder='Masukan Jumlah Meteran'
+                            leftIcon={{ type: 'antdesign', name: 'dashboard' }}
+                            value={user.amount}
+                            keyboardType={'numeric'}
+                            onChangeText={(value) => setUser({...user, amount: value})}
                         />
-                        {handleButtonUpdate()}
                         <View style={{flexDirection: 'row'}}>
                             <Button
                                 icon={{
@@ -176,7 +179,7 @@ const User = props => {
                                 }}
                                 buttonStyle={{backgroundColor: '#d41313', marginLeft: 10, marginRight: 15, width: 130}}
                                 title="Batal"
-                                onPress={handleModal}
+                                onPress={handleClose}
                             />
                             <Button
                                 icon={{
@@ -194,6 +197,7 @@ const User = props => {
                     </View>
                 </Card>
             </Modal>
+
             <FAB
                 icon="account-plus"
                 style={styles.btnUser}

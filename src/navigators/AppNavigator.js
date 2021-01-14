@@ -3,13 +3,13 @@ import {View} from 'react-native';
 import {NavigationContainer} from '@react-navigation/native';
 import {createStackNavigator} from '@react-navigation/stack';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
-import StackNavigator from "@react-navigation/stack/src/navigators/createStackNavigator";
 import IconOctions from 'react-native-vector-icons/Octicons'
 
 // Screens
 import SplashScreen from "../screens/SplashScreen";
 import Dashboard from "../screens/Dashboard";
 import User from "../screens/User";
+import DetailUser from "../screens/DetailUser";
 
 
 const Stack = createStackNavigator();
@@ -28,6 +28,7 @@ const AppNavigator = () => {
                             backgroundColor: '#0077e6',
                         },
                         headerTintColor: '#fff',
+                        headerShown: false
                     }}
                 />
                 <Stack.Screen
@@ -60,7 +61,7 @@ const TabNavigator = () => {
             }}>
             <Tab.Screen
                 name="Home"
-                component={Dashboard}
+                component={HomeNavigator}
                 options={{
                     tabBarLabel: '',
                     tabBarColor: 'white',
@@ -72,8 +73,8 @@ const TabNavigator = () => {
                 }}
             />
             <Tab.Screen
-                name="User"
-                component={User}
+                name="UserNavigator"
+                component={UserNagigator}
                 options={{
                     tabBarLabel: '',
                     tabBarColor: 'white',
@@ -86,6 +87,55 @@ const TabNavigator = () => {
             />
         </Tab.Navigator>
     )
+}
+
+const HomeNavigator = () =>{
+    return (
+        <Stack.Navigator initialRouteName="Home">
+            <Stack.Screen
+                name="Home"
+                component={Dashboard}
+                options={{
+                    title: 'Dashboard',
+                    headerStyle: {
+                        backgroundColor: '#0077e6',
+                    },
+                    headerTintColor: '#fff',
+                    headerLeft: null,
+                }}
+            />
+        </Stack.Navigator>
+    );
+}
+
+const UserNagigator = () =>{
+    return (
+        <Stack.Navigator initialRouteName="User">
+            <Stack.Screen
+                name="User"
+                component={User}
+                options={{
+                    title: 'Data User',
+                    headerStyle: {
+                        backgroundColor: '#0077e6',
+                    },
+                    headerTintColor: '#fff',
+                    headerLeft: null,
+                }}
+            />
+            <Stack.Screen
+                name="DetailUser"
+                component={DetailUser}
+                options={{
+                    title: 'Detail User',
+                    headerStyle: {
+                        backgroundColor: '#0077e6',
+                    },
+                    headerTintColor: '#fff',
+                }}
+            />
+        </Stack.Navigator>
+    );
 }
 
 export default AppNavigator;
