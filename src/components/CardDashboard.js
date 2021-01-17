@@ -1,37 +1,61 @@
 import React from "react";
 import {View, Text, StyleSheet, TouchableOpacity} from "react-native";
 import {Card, Badge} from "react-native-elements";
+import firebase from "../services/firebase";
 
 const CardDashboard = props => {
-    const {name, status, handleDetailUser, id} = props
+    const {user, handleTransaction, idtr} = props
+    const [date, setDate] = React.useState('')
+    const [stat, setStat] = React.useState('')
+    const refTransaction = firebase.firestore().collection('transaction')
+
+    React.useEffect(() => {
+        getLastTransaction()
+    })
 
     const handleBadge = (status) => {
         if (status === 'Lunas'){
             return(
-                <View style={styles.vCard}>
-                    <Badge value="  " status="success" containerStyle={styles.badge}/>
-                    <Text style={{fontSize: 15, marginLeft: 30}}>{status}</Text>
-                </View>
+                <Badge
+                    status="success"
+                    containerStyle={{ position: 'absolute', top: -4, right: -4 }}
+                />
             )
         }else {
             return (
-                <View style={styles.vCard}>
-                    <Badge value="  " status="error" containerStyle={styles.badge}/>
-                    <Text style={{fontSize: 15, marginLeft: 30}}>{status}</Text>
-                </View>
+                <Badge
+                    status="error"
+                    containerStyle={{ position: 'absolute', top: -4, right: -4 }}
+                />
             )
+        }
+    }
+
+    const getLastTransaction = () => {
+        const transactions = user.transactions
+        if (transactions.length !== 0){
+            refTransaction.doc(transactions[transactions.length-1]).get().then( doc => {
+                const {date_transaction,status} = doc.data()
+                setDate(date_transaction)
+                setStat(status)
+            })
+        }else {
+            setDate('Belum Ada Transaksi')
         }
     }
 
     return(
             <View style={styles.container}>
-                <TouchableOpacity onPress={() => handleDetailUser(name,status, id)}>
+                <TouchableOpacity onPress={() => handleTransaction(user)}>
                     <Card containerStyle={styles.card}>
                         <View style={styles.vCard}>
-                            <View style={styles.vtext}>
-                                <Text style={styles.txtName}>{name}</Text>
+                            <View style={{width: 190}}>
+                                <Text style={styles.txtName}>{user.name}</Text>
+                                {handleBadge(stat)}
                             </View>
-                            {handleBadge(status)}
+                            <View style={{width: 210}}>
+                                <Text style={styles.txtName}>{date}</Text>
+                            </View>
                         </View>
                     </Card>
                 </TouchableOpacity>
@@ -46,7 +70,7 @@ const styles = StyleSheet.create({
     },
     txtName: {
         marginLeft: 10,
-        fontSize: 20,
+        fontSize: 15,
     },
     card: {
         justifyContent: 'center',
@@ -59,15 +83,9 @@ const styles = StyleSheet.create({
         borderBottomLeftRadius: 5,
         borderBottomRightRadius: 5,
     },
-    badge: {
-        position: 'absolute',
-    },
     vCard: {
         flexDirection: 'row'
     },
-    vtext: {
-        width: 200,
-    }
 })
 
 export default CardDashboard;

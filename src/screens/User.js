@@ -13,12 +13,10 @@ const User = props => {
         status: 'Aktif',
         transactions: [],
     })
-    const [idUser, setIdUser] = React.useState('')
     const [dataUser, setDataUser] = React.useState([])
     const [search, setSearch] = React.useState('')
     const refFire = firebase.firestore().collection('user')
     const [visible, setVisible] = React.useState(false)
-    const [flag, setFlag] = React.useState('save')
 
     React.useEffect(() => {
         if (search === '') {
@@ -53,19 +51,39 @@ const User = props => {
     }
 
     const handleSave = () => {
-            refFire.add({
-                name: user.name,
-                amount: user.amount,
-                status: user.status,
-                transactions: user.transactions,
-            }).then((docRef) => {
-                console.log("")
-                setVisible(!visible)
-            })
-                .catch((error) => {
-                    console.log('Save Data Error ' + error)
-
-                })
+        let er = ''
+        refFire.add({
+           name: user.name,
+           amount: user.amount,
+           status: user.status,
+           transactions: user.transactions,
+        }).then((docRef) => {
+        })
+          .catch((error) => {
+             console.log('Save Data Error ' + error)
+             er = 'error'
+        })
+        if (er === '') {
+            Alert.alert(
+                "",
+                'Data Berhasil Tersimpan',
+                [
+                    {
+                        Text: "OK",
+                    }
+                ], { cancelable: false })
+        }else {
+            Alert.alert(
+                "",
+                'Data Gagal Tersimpan',
+                [
+                    {
+                        Text: "OK",
+                    }
+                ], { cancelable: false })
+        }
+        setUser({...user, name: '', amount: ''})
+        setVisible(!visible)
     }
 
     const handleClose = () => {
@@ -76,22 +94,6 @@ const User = props => {
     const handleDetail = (user) => {
         props.navigation.navigate('DetailUser',{
             user: user
-        })
-    }
-
-    const handleBtnUpdate = () => {
-        const updateRef = firebase.firestore().collection('user').doc(idUser)
-        updateRef.set({
-            name: user.name,
-            amount: user.amount,
-            status: 'Tidak Aktif'
-        }).then((docRef) => {
-            setUser({...user, name: '', amount: ''})
-            setIdUser('')
-            setVisible(!visible)
-        }).catch(error => {
-            console.log('update ' +error )
-
         })
     }
 
@@ -124,13 +126,11 @@ const User = props => {
         setVisible(!visible)
     }
 
-
-
     return(
         <View style={styles.container}>
             <View style={styles.vSearch}>
                 <SearchBar
-                    placeholder='Inputkan Nama'
+                    placeholder='Masukan Nama'
                     lightTheme={true}
                     onChangeText={(value) => setSearch(value)}
                     value={search}

@@ -10,6 +10,8 @@ import SplashScreen from "../screens/SplashScreen";
 import Dashboard from "../screens/Dashboard";
 import User from "../screens/User";
 import DetailUser from "../screens/DetailUser";
+import Transaction from "../screens/Transaction";
+import Report from "../screens/Report";
 
 
 const Stack = createStackNavigator();
@@ -73,6 +75,19 @@ const TabNavigator = () => {
                 }}
             />
             <Tab.Screen
+                name="TransactionNavigator"
+                component={TransactionNavigator}
+                options={{
+                    tabBarLabel: '',
+                    tabBarColor: 'white',
+                    tabBarIcon: ({ color }) =>(
+                        <View style={{marginTop: 10}}>
+                            <IconOctions name="list-unordered" color={color} size={25}/>
+                        </View>
+                    ),
+                }}
+            />
+            <Tab.Screen
                 name="UserNavigator"
                 component={UserNagigator}
                 options={{
@@ -81,6 +96,19 @@ const TabNavigator = () => {
                     tabBarIcon: ({ color }) =>(
                         <View style={{marginTop: 10}}>
                             <IconOctions name="person" color={color} size={25}/>
+                        </View>
+                    ),
+                }}
+            />
+            <Tab.Screen
+                name="ReportNavigator"
+                component={ReportNavigator}
+                options={{
+                    tabBarLabel: '',
+                    tabBarColor: 'white',
+                    tabBarIcon: ({ color }) =>(
+                        <View style={{marginTop: 10}}>
+                            <IconOctions name="repo" color={color} size={25}/>
                         </View>
                     ),
                 }}
@@ -97,6 +125,25 @@ const HomeNavigator = () =>{
                 component={Dashboard}
                 options={{
                     title: 'Dashboard',
+                    headerStyle: {
+                        backgroundColor: '#0077e6',
+                    },
+                    headerTintColor: '#fff',
+                    headerLeft: null,
+                }}
+            />
+        </Stack.Navigator>
+    );
+}
+
+const TransactionNavigator = () => {
+    return (
+        <Stack.Navigator initialRouteName="Transaction">
+            <Stack.Screen
+                name="Transaction"
+                component={Transaction}
+                options={{
+                    title: 'Transacki bulan ini',
                     headerStyle: {
                         backgroundColor: '#0077e6',
                     },
@@ -132,6 +179,25 @@ const UserNagigator = () =>{
                         backgroundColor: '#0077e6',
                     },
                     headerTintColor: '#fff',
+                }}
+            />
+        </Stack.Navigator>
+    );
+}
+
+const ReportNavigator = () => {
+    return (
+        <Stack.Navigator initialRouteName="Report">
+            <Stack.Screen
+                name="Report"
+                component={Report}
+                options={{
+                    title: 'Laporan',
+                    headerStyle: {
+                        backgroundColor: '#0077e6',
+                    },
+                    headerTintColor: '#fff',
+                    headerLeft: null,
                 }}
             />
         </Stack.Navigator>
