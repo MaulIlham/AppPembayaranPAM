@@ -117,6 +117,7 @@ const Dashboard = () => {
         const resultTotal = resultAmount * 3000
         refTransaction.add({
             userId: user.key,
+            name: user.name,
             amount: resultAmount,
             total: resultTotal,
             date_transaction: newDate,
