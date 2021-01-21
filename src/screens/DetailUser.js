@@ -1,5 +1,5 @@
 import React from "react";
-import {View, Text, ScrollView} from "react-native";
+import {View, Text, ScrollView, Dimensions} from "react-native";
 import {FAB, Modal} from "react-native-paper";
 import CardIdentityUser from "../components/CardIdentityUser";
 import Icon from "react-native-vector-icons/Entypo";
@@ -69,15 +69,18 @@ const DetailUser = props => {
         }
         return row
     }
+    const height = Dimensions.get('window').height
 
     return(
         <View>
-            <ScrollView>
-                <CardIdentityUser
-                    user={user}
-                />
-                {generateHistoryTransaction()}
-            </ScrollView>
+            <View style={{height: 670}}>
+                <ScrollView>
+                    <CardIdentityUser
+                        user={user}
+                    />
+                    {generateHistoryTransaction()}
+                </ScrollView>
+            </View>
 
             <Modal visible={visible} onDismiss={handleModal} contentContainerStyle={{backgroundColor: 'white', width: 373, paddingBottom: 10, marginLeft: 10}} >
                 <Card>

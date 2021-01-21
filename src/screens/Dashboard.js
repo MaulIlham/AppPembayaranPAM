@@ -1,5 +1,5 @@
 import React from "react";
-import {View, Text, StyleSheet, ScrollView, LogBox} from 'react-native';
+import {View, Text, StyleSheet, ScrollView, LogBox, Alert} from 'react-native';
 import {Button, Input, Card, SearchBar} from "react-native-elements";
 import {Modal} from "react-native-paper";
 import Icon from 'react-native-vector-icons/Entypo';
@@ -16,6 +16,7 @@ const Dashboard = () => {
     const [search, setSearch] = React.useState('')
     const [visible, setVisible] = React.useState(false)
     const [amount, setAmount] = React.useState('')
+    const [validUser, setValidUser] = React.useState(true)
     const monthNames = ["Januari", "Februari", "Maret", "April", "Mai", "Juni",
         "Juli", "Augustus", "September", "Oktober", "November", "Desember"
     ];
@@ -56,8 +57,29 @@ const Dashboard = () => {
     }
 
     const handleTransaction = (user) => {
-        setUser(user)
-        handleModal()
+        if (user.status === 'Aktif') {
+            setUser(user)
+            handleModal()
+        }else {
+            Alert.alert(
+                "",
+                'Pelanggan sudah tidak berlangganan PAM lagi!, cek user dan aktifkan user kembali jika ingin melakukan transaksi',
+                [
+                    {
+                        Text: "OK",
+                    }
+                ], { cancelable: false })
+        }
+        checkUser(user)
+    }
+
+    const checkUser = (user) => {
+         firebase.firestore().collection('transaction').doc(user.transactions[user.transactions.length-1]).get().then( doc => {
+             const {date_record} = doc.data()
+             if (moment(date_record, 'YYYY-MM-DD').month() === new Date().getMonth()) {
+                 setValidUser(false)
+             }
+         })
     }
 
     const generateUser = () => {
@@ -132,8 +154,31 @@ const Dashboard = () => {
     }
 
     const handleSave = (status) => {
-        saveTransaction(status)
-        handleModal()
+        if (validUser) {
+            if (amount !== '') {
+                saveTransaction(status)
+                handleModal()
+            } else {
+                Alert.alert(
+                    "",
+                    'Isi terlebih dahulu jumlah meteran',
+                    [
+                        {
+                            Text: "OK",
+                        }
+                    ], {cancelable: false})
+            }
+        }else {
+            Alert.alert(
+                "",
+                'Pelanggan sudah membayar atau sudah dilakukan pencatatan meteran untuk bulan ini!, check menu transaksi untuk melihat detail pembayaran',
+                [
+                    {
+                        Text: "OK",
+                    }
+                ], {cancelable: false})
+            handleModal()
+        }
     }
 
     const handleCalc = (amount) => {

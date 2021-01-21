@@ -100,19 +100,6 @@ const TabNavigator = () => {
                     ),
                 }}
             />
-            <Tab.Screen
-                name="ReportNavigator"
-                component={ReportNavigator}
-                options={{
-                    tabBarLabel: '',
-                    tabBarColor: 'white',
-                    tabBarIcon: ({ color }) =>(
-                        <View style={{marginTop: 10}}>
-                            <IconOctions name="repo" color={color} size={25}/>
-                        </View>
-                    ),
-                }}
-            />
         </Tab.Navigator>
     )
 }
@@ -143,7 +130,7 @@ const TransactionNavigator = () => {
                 name="Transaction"
                 component={Transaction}
                 options={{
-                    title: 'Transacki bulan ini',
+                    title: 'Transaksi bulan ini',
                     headerStyle: {
                         backgroundColor: '#0077e6',
                     },

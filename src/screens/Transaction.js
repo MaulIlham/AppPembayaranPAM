@@ -164,7 +164,7 @@ const Transaction = props => {
                                 color: "white"
                             }}
                             buttonStyle={{backgroundColor: '#d41313'}}
-                            title="Batal"
+                            title="Close"
                             onPress={handleModal}
                         />
                     </View>

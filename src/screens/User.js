@@ -50,20 +50,14 @@ const User = props => {
         setDataUser(users)
     }
 
-    const handleSave = () => {
+    const saveData = () => {
         let er = ''
         refFire.add({
-           name: user.name,
-           amount: user.amount,
-           status: user.status,
-           transactions: user.transactions,
+            name: user.name,
+            amount: user.amount,
+            status: user.status,
+            transactions: user.transactions,
         }).then((docRef) => {
-        })
-          .catch((error) => {
-             console.log('Save Data Error ' + error)
-             er = 'error'
-        })
-        if (er === '') {
             Alert.alert(
                 "",
                 'Data Berhasil Tersimpan',
@@ -72,18 +66,36 @@ const User = props => {
                         Text: "OK",
                     }
                 ], { cancelable: false })
-        }else {
-            Alert.alert(
-                "",
-                'Data Gagal Tersimpan',
-                [
-                    {
-                        Text: "OK",
-                    }
-                ], { cancelable: false })
-        }
+        })
+            .catch((error) => {
+                console.log('Save Data Error ' + error)
+                er = 'error'
+                Alert.alert(
+                    "",
+                    'Data Gagal Tersimpan',
+                    [
+                        {
+                            Text: "OK",
+                        }
+                    ], { cancelable: false })
+            })
         setUser({...user, name: '', amount: ''})
-        setVisible(!visible)
+    }
+
+    const handleSave = () => {
+       if (user.name !== '' || user.amount !== ''){
+           saveData()
+           handleModal()
+       }else {
+           Alert.alert(
+               "",
+               'Mohon lengkapi data terlebih dahulu!',
+               [
+                   {
+                       Text: "OK",
+                   }
+               ], { cancelable: false })
+       }
     }
 
     const handleClose = () => {
